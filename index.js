@@ -138,7 +138,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
 
 //Connection event listener
 io.on("connection", (socket) => {
-  console.log(`${socket.id} connected`);
+  console.log(`SocketID ${socket.id} connected`);
   socket.on("join-conversation", async (origin, destination) => {
     try {
       let result = await collection.findOne({
@@ -161,7 +161,8 @@ io.on("connection", (socket) => {
         );
       }
 
-      const roomID = result?._id || result?.insertedId?.toString?.();
+      const roomID = result?._id.toString() || result?.insertedId?.toString?.();
+
       socket.join(roomID);
       socket.activeRoom = roomID;
 
@@ -170,7 +171,7 @@ io.on("connection", (socket) => {
       );
 
       // Notify the client that they have joined
-      socket.emit("join-conversation", roomID);
+      io.to(socket.activeRoom).emit("joined-conversation", roomID, destination); 
     } catch (e) {
       console.error(e);
       socket.emit("error", { message: e.message });
@@ -217,7 +218,7 @@ io.on("connection", (socket) => {
     }
 
     // Broadcast the new message to all users in the room
-    io.to(socket.activeRoom).emit("message", message);
+    io.to(socket.activeRoom).emit("send-message", message);
   });
 
   // Disconnect event listener
