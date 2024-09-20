@@ -98,6 +98,10 @@ app.get("/conversations", async (request, response) => {
 });
 
 app.post("/upload", upload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No file uploaded.");
+  }
+
   const { documentID, userID } = req.body;
   const { buffer, mimetype, originalname } = req.file;
 
@@ -201,8 +205,6 @@ io.on("connection", (socket) => {
   // Message event listener
   socket.on("message", ({ message, documentID, avoidInsertion }) => {
     // Push the new message to the database for the active room
-    console.log(`Message: ${message.text} sent on room: ${socket.activeRoom}`);
-
     if (!avoidInsertion) {
       collection.updateOne(
         { _id: new ObjectId(documentID) },
