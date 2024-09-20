@@ -171,7 +171,7 @@ io.on("connection", (socket) => {
       );
 
       // Notify the client that they have joined
-      io.to(socket.activeRoom).emit("joined-conversation", roomID, destination); 
+      io.emit("join-conversation", roomID); 
     } catch (e) {
       console.error(e);
       socket.emit("error", { message: e.message });
