@@ -18,7 +18,7 @@ export const generateFileName = (originalname) => {
 };
 
 const client = new MongoClient(
-  "mongodb+srv://ppmbjr:12KSV3cCxdvBBV5S@cluster0.f4pus.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  process.env.MONGODB_URL
 );
 
 const PORT = 3000;
